@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     private InputAction jumpAction;
     private InputAction attackAction;
     private InputAction dashAction;
+    private Collider2D ownCollider;
+    private AudioSource audioSource;
     // PROVISIONAL
     private InputAction hurtAction;
     // FIN PROVISIONAL
@@ -17,19 +19,30 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     [SerializeField] private Transform attackPoint;
     [SerializeField] private LayerMask enemyLayers;
+    [SerializeField] private LayerMask healingLayer;
     private float direction = 1.0f;
     [SerializeField] private float attackRange = 0.5f;
     private bool grounded;
     private int health = 3;
 
-    [SerializeField] float speed = 10;
-    [SerializeField] float dashSpeed = 50;
-    [SerializeField] float jumpForce = 200;
+    [SerializeField] private float speed = 10;
+    [SerializeField] private float dashSpeed = 50;
+    [SerializeField] private float jumpForce = 200;
+    [SerializeField] private float attackDelay = 1.0f;
+    [SerializeField] private AudioClip swordSound;
+    [SerializeField] private AudioClip jumpSound;
+    private AudioSource playerSoundController;
+    [SerializeField] private AudioClip dashSound;
+    [SerializeField] private AudioClip hurtSound;
+    [SerializeField] private AudioClip gameOverSound;
 
     // Start is called before the first frame update
     void Start()
     {
         playerInput = GetComponent<PlayerInput>();
+        ownCollider = GetComponent<Collider2D>();
+        audioSource = Camera.main.GetComponent<AudioSource>();
+        playerSoundController = GetComponent<AudioSource>();
         walkAction = playerInput.actions["Andar"];
         jumpAction = playerInput.actions["Saltar"];
         attackAction = playerInput.actions["Atacar"];
@@ -84,9 +97,14 @@ public class PlayerController : MonoBehaviour
 
             if (horizontal < 0.0f){
                 direction = -1.0f;
+                playerSoundController.enabled = true;
             }
             else if (horizontal > 0.0f){
                 direction = 1.0f;
+                playerSoundController.enabled = true;
+            }
+            else{
+                playerSoundController.enabled = false;
             }
 
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * direction, transform.localScale.y, transform.localScale.z);
@@ -105,6 +123,7 @@ public class PlayerController : MonoBehaviour
     private void Jump(){
         if (grounded && jumpAction.triggered){
             animator.SetTrigger("jump");
+            audioSource.PlayOneShot(jumpSound);
             rb.AddForce(Vector2.up * jumpForce);
         }
     }
@@ -112,26 +131,39 @@ public class PlayerController : MonoBehaviour
     private void Attack(){
         if (attackAction.triggered){
             animator.SetTrigger("attack");
-            Collider2D [] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-        
-            foreach(Collider2D enemy in hitEnemies){
-                Debug.Log("Hit");
-            }
+            StartCoroutine(ExecuteAttack());
+            
+            audioSource.PlayOneShot(swordSound);
+        }
+    }
+
+    IEnumerator ExecuteAttack()
+    {
+        yield return new WaitForSeconds(attackDelay);
+
+        Collider2D [] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+       
+       foreach(Collider2D enemy in hitEnemies){
+            Destroy(enemy.gameObject);
+            Debug.Log("Hit");
         }
     }
 
     private void Hit(){
         health--;
         animator.SetTrigger("hurt");
+        audioSource.PlayOneShot(hurtSound);
 
         if (health <= 0){
             animator.SetTrigger("dead");
+            audioSource.PlayOneShot(gameOverSound);
         }
     }
 
     private void Dash(){
         if (dashAction.triggered){
             animator.SetTrigger("dash");
+            audioSource.PlayOneShot(dashSound);
         }
     }
 
