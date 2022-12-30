@@ -33,15 +33,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Hurt (provisional)",
-                    "type": "Button",
-                    "id": "e166ef84-9a78-490a-adeb-98c3c4822cca",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Dash",
                     "type": "Button",
                     "id": "ceee5ced-179d-461c-82be-4b87bec4ce71",
@@ -104,17 +95,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Atacar",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d4e3ec95-3261-464c-9287-580bf4ef8797",
-                    "path": "<Keyboard>/h",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Hurt (provisional)",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
