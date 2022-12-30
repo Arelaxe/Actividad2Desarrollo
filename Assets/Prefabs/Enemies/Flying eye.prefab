@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1503170836681084772}
   - component: {fileID: 1503170836681084774}
   - component: {fileID: 1503170836681084795}
-  m_Layer: 2
+  m_Layer: 6
   m_Name: Flying eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 1503170836681084799}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -4.617143, y: 4.617143, z: 4.617143}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -74,8 +74,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -733139117
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: -4795363162621231457, guid: 6d7cd4f7505dc674c891ca8946cfd98b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -169,14 +169,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 5
   waypoints:
-  - {x: -1, y: 0}
-  - {x: -1, y: 0.5}
+  - {x: 9.8, y: -2.79}
+  - {x: 8, y: -2.79}
   speed: 0.2
   stopTime: 0
   flip: 0
-  visionConeOriginOffset: {x: 0.1, y: 0}
+  visionConeOriginOffset: {x: 0.4, y: 0}
   visionConeAngle: 45
-  visionConeDistance: 3
+  visionConeDistance: 5
+  hitSound: {fileID: 8300000, guid: 986b10a99bdfaf344839944be6ceb2ce, type: 3}
+  deathSound: {fileID: 8300000, guid: 60b54b77c901c57459093e9939cad5fb, type: 3}
   damage: 3
   damageFramePlaying: 0
   speedMultiplier: 2

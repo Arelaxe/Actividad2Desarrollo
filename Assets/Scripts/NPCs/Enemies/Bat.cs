@@ -30,11 +30,17 @@ public class Bat : Enemy
         GetComponent<Rigidbody2D>().velocity = Vector2.down * 2;
     }
 
+    private void OnCollisionStay2D(Collision2D collision) {
+        if (collision.collider.name == "Player")
+        {
+            collision.gameObject.GetComponent<PlayerController>().Hit();
+        }
+    }
     protected void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider.name == "Player")
         {
-            Debug.Log("Player take hit function");
+            collision.gameObject.GetComponent<PlayerController>().Hit();
         }
     }
 

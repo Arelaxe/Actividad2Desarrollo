@@ -23,12 +23,17 @@ public abstract class NPC : MonoBehaviour
     [SerializeField] private Vector2 visionConeOriginOffset;
     [SerializeField] private float visionConeAngle;
     [SerializeField] private float visionConeDistance;
+
+    [SerializeField] private AudioClip hitSound;
+    [SerializeField] private AudioClip deathSound;
+    protected AudioSource mainAudioSource;
     protected RaycastHit2D[] visionHits;
 
     protected Animator animator;
 
     protected virtual void Start()
     {
+        mainAudioSource = Camera.main.GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
     }
 
@@ -110,6 +115,8 @@ public abstract class NPC : MonoBehaviour
         {
             health -= damage;
 
+            mainAudioSource.PlayOneShot(hitSound);
+
             animator.SetTrigger("Take Hit");
 
             yield return StartCoroutine(WaitForAnimStart("TakeHit"));
@@ -125,9 +132,10 @@ public abstract class NPC : MonoBehaviour
             else
             {
                 animator.SetTrigger("Die");
-                yield return StartCoroutine(WaitForAnimStart("Death"));
+                continueRoutine = false;
                 GetComponent<Collider2D>().isTrigger = true;
-
+                yield return StartCoroutine(WaitForAnimStart("Death"));
+                mainAudioSource.PlayOneShot(deathSound);
                 AfterDeath();
             }
         }
@@ -142,7 +150,7 @@ public abstract class NPC : MonoBehaviour
         float originOffsetX = Mathf.Sign(transform.localScale.x) == -1 ? visionConeOriginOffset.x * -1 : visionConeOriginOffset.x;
         Vector3 origin = new(transform.position.x + originOffsetX, transform.position.y + visionConeOriginOffset.y, transform.position.z);
 
-        visionHits = CollisionUtils.RaycastArc(10, visionConeAngle, origin, 0, direction, visionConeDistance, LayerMask.GetMask("Foreground"));
+        visionHits = CollisionUtils.RaycastArc(10, visionConeAngle, origin, 0, direction, visionConeDistance, LayerMask.GetMask("Player"));
     }
 
     public IEnumerator WaitForAnimStart(string name)

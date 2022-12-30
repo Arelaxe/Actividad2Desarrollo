@@ -14,9 +14,6 @@ public class PlayerController : MonoBehaviour
     private InputAction jumpAction;
     private InputAction attackAction;
     private InputAction dashAction;
-    // PROVISIONAL
-    private InputAction hurtAction;
-    // FIN PROVISIONAL
 
     // Components
     private Collider2D ownCollider;
@@ -26,6 +23,7 @@ public class PlayerController : MonoBehaviour
     // Values
     private float direction = 1.0f;
     private bool grounded;
+    private bool isTakingDamage = false;
 
     // Audio Sources
     private AudioSource mainAudioSource;
@@ -44,7 +42,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int health = 3;
     [SerializeField] private float dashSpeed = 50;
     [SerializeField] private float jumpForce = 200;
+    [SerializeField] private float attackValue = 2.0f;
     [SerializeField] private float attackDelay = 1.0f;
+    [SerializeField] private float inmunityTime = 2.0f;
     
     // Audio clips
     [SerializeField] private AudioClip swordSound;
@@ -72,9 +72,6 @@ public class PlayerController : MonoBehaviour
         jumpAction = playerInput.actions["Saltar"];
         attackAction = playerInput.actions["Atacar"];
         dashAction = playerInput.actions["Dash"];
-        // PROVISIONAL
-        hurtAction = playerInput.actions["Hurt (provisional)"];
-        // FIN PROVISIONAL
     }
 
     // Update is called once per frame
@@ -91,10 +88,6 @@ public class PlayerController : MonoBehaviour
 
         if (dashAction.triggered){
             Dash();
-        }
-       
-        if (hurtAction.triggered){
-            Hit();
         }
     }
 
@@ -173,18 +166,24 @@ public class PlayerController : MonoBehaviour
     */
 
     // This function is called when they hit us
-    private void Hit(){
-        // Reduce player's health
-        health--;
+    public void Hit(){
+        if (!isTakingDamage){
+            isTakingDamage = true;
+            
+            // Reduce player's health
+            health--;
 
-        // Update animations and sounds
-        animator.SetTrigger("hurt");
-        mainAudioSource.PlayOneShot(hurtSound);
+            // Update animations and sounds
+            animator.SetTrigger("hurt");
+            mainAudioSource.PlayOneShot(hurtSound);
 
-        // If our health reaches 0, we die and the game is over
-        if (health <= 0){
-            animator.SetTrigger("dead");
-            mainAudioSource.PlayOneShot(gameOverSound);
+            // If our health reaches 0, we die and the game is over
+            if (health <= 0){
+                animator.SetTrigger("dead");
+                mainAudioSource.PlayOneShot(gameOverSound);
+            }
+
+            StartCoroutine(Inmunity());
         }
     }
 
@@ -211,6 +210,7 @@ public class PlayerController : MonoBehaviour
 
     // Checks whether we are grounded or not
     private void CheckIsGrounded() {
+        Debug.DrawRay(transform.position, Vector3.down*1.5f, Color.green);
         grounded = Physics2D.Raycast(transform.position, Vector3.down, 1.5f);
     }
 
@@ -219,8 +219,7 @@ public class PlayerController : MonoBehaviour
     */
 
     // Coroutine for attack action
-    IEnumerator ExecuteAttack()
-    {
+    IEnumerator ExecuteAttack() {
         // We need to add a certain delay because of the attack animation
         yield return new WaitForSeconds(attackDelay);
 
@@ -232,8 +231,15 @@ public class PlayerController : MonoBehaviour
         Collider2D [] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
         
         foreach(Collider2D enemy in hitEnemies){
-            Destroy(enemy.gameObject);
+            if (enemy.gameObject.GetComponent<NPC>() != null){
+                StartCoroutine(enemy.gameObject.GetComponent<NPC>().TakeHit(gameObject, attackValue));
+            }
         }
+    }
+
+    IEnumerator Inmunity() {
+        yield return new WaitForSeconds(inmunityTime);
+        isTakingDamage = false;
     }
 
     /*

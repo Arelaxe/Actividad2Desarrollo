@@ -17,7 +17,8 @@ public class AttackHitBox : MonoBehaviour
         {
             if (collision.name == "Player")
             {
-                Debug.Log("Player take hit function");
+                collision.gameObject.GetComponent<PlayerController>().Hit();
+                //Debug.Log("Player take hit function");
             }
         }
     }

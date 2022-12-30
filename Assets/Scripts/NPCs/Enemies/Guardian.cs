@@ -14,6 +14,7 @@ public class Guardian : Enemy
     [SerializeField] private float maxChasingRange;
     private float guardingPoint;
     private GameObject target;
+    [SerializeField] private AudioClip attackSound;
 
     protected override void Start()
     {
@@ -102,6 +103,7 @@ public class Guardian : Enemy
         {
             nextAttack = Time.time + attackRate;
             animator.SetTrigger("Attack");
+            mainAudioSource.PlayOneShot(attackSound);
             attacking = true;
         }
     }

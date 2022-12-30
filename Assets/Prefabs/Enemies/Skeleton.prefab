@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5988539577108191630}
   - component: {fileID: 5988539577108191629}
   - component: {fileID: 5988539577108191628}
-  m_Layer: 2
+  m_Layer: 6
   m_Name: Skeleton Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   - component: {fileID: 5988539577825160963}
   - component: {fileID: 5988539577825160445}
   - component: {fileID: 5988539577825160446}
-  m_Layer: 2
+  m_Layer: 6
   m_Name: Skeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ Transform:
   m_GameObject: {fileID: 5988539577825160442}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3.623519, y: 3.623519, z: 3.623519}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5988539577108191630}
@@ -146,8 +146,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -733139117
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 4723107735738678597, guid: 1018b0ba13578bf459bd254ae1a2be99, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -241,16 +241,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 10
   waypoints:
-  - {x: -2, y: 0}
-  - {x: 2, y: 0}
+  - {x: 8.73, y: -2.98}
+  - {x: 6, y: -2.98}
   speed: 1
   stopTime: 2
   flip: 1
-  visionConeOriginOffset: {x: 0.1, y: 0.2}
+  visionConeOriginOffset: {x: 0.5, y: 0.6}
   visionConeAngle: 45
-  visionConeDistance: 2
+  visionConeDistance: 5
+  hitSound: {fileID: 8300000, guid: ecaa8f50557e53343a5659cf5bbdcbf6, type: 3}
+  deathSound: {fileID: 8300000, guid: a477221a8687852428da862448cb94ce, type: 3}
   damage: 5
   damageFramePlaying: 0
   distancing: 0.3
   attackRate: 1
   maxChasingRange: 2.5
+  attackSound: {fileID: 8300000, guid: 1fe862efc3b48c7448566761b2ed3b20, type: 3}
