@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     private Collider2D ownCollider;
     private Rigidbody2D rb;
     private Animator animator;
+    private SpriteRenderer ownRenderer;
 
     // Values
     private float direction = 1.0f;
@@ -26,7 +27,7 @@ public class PlayerController : MonoBehaviour
     private bool isTakingDamage = false;
     private bool isAttacking = false;
     private bool isDead = false;
-    private bool isDashing = false;
+    private bool canPressDash = true;
 
     // Audio Sources
     private AudioSource mainAudioSource;
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attackValue = 2.0f;
     [SerializeField] private float attackDelay = 1.0f;
     [SerializeField] private float inmunityTime = 2.0f;
+    [SerializeField] private float dashCoolDownTime = 2.0f;
     
     // Audio clips
     [SerializeField] private AudioClip swordSound;
@@ -67,6 +69,7 @@ public class PlayerController : MonoBehaviour
         ownCollider = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        ownRenderer = GetComponent<SpriteRenderer>();
         mainAudioSource = Camera.main.GetComponent<AudioSource>();
         walkSoundController = GetComponent<AudioSource>();
 
@@ -90,8 +93,8 @@ public class PlayerController : MonoBehaviour
                 Attack();
             }
 
-            if (!isDashing && dashAction.triggered){
-                isDashing = true;
+            if (dashAction.triggered && canPressDash){
+                canPressDash = false;
                 Dash();
             }
         }
@@ -114,6 +117,7 @@ public class PlayerController : MonoBehaviour
     private void Walk(){
         if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack")){ // We don't want the character to move while attacking
             float horizontal = walkAction.ReadValue<Vector2>().x;
+            float oldDirection = direction;
 
             // We don't make any sounds if the character it's not moving or if it's not executing the proper animation
             if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Run") || horizontal == 0.0f){
@@ -131,6 +135,15 @@ public class PlayerController : MonoBehaviour
             // We rotate the character depending on the direction it is moving
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * direction, transform.localScale.y, transform.localScale.z);
             
+            if (direction != oldDirection){
+                if (direction < 0){
+                    transform.position = new Vector3(transform.position.x - 0.2f, transform.position.y, transform.position.z);
+                }
+                else if (direction > 0){
+                    transform.position = new Vector3(transform.position.x + 0.2f, transform.position.y, transform.position.z);
+                }
+            }
+
             // We update the animation bool
             if (horizontal == 0.0f){
                 animator.SetBool("isWalking", false);
@@ -169,7 +182,6 @@ public class PlayerController : MonoBehaviour
     private void Dash(){
         animator.SetTrigger("dash");
         mainAudioSource.PlayOneShot(dashSound);
-        isDashing = false;
     }
 
     /*
@@ -197,6 +209,7 @@ public class PlayerController : MonoBehaviour
             }
             else{
                 StartCoroutine(Inmunity());
+                StartCoroutine(DoBlinks(4, inmunityTime/4));
             }
         }
     }
@@ -217,8 +230,9 @@ public class PlayerController : MonoBehaviour
 
     // Physics for the dash action
     private void DashPhysics() {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dash") && !isDashing){
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dash")){
             rb.velocity = new Vector2(direction * dashSpeed, rb.velocity.y); 
+            StartCoroutine(DashCoolDown());
         }
     }
 
@@ -256,6 +270,25 @@ public class PlayerController : MonoBehaviour
     IEnumerator Inmunity() {
         yield return new WaitForSeconds(inmunityTime);
         isTakingDamage = false;
+    }
+
+    IEnumerator DashCoolDown() {
+        yield return new WaitForSeconds(dashCoolDownTime);
+        canPressDash = true;
+    }
+
+    IEnumerator DoBlinks(int numBlinks, float seconds) {
+        for (int i=0; i<numBlinks*2; i++) {
+        
+            //toggle renderer
+            ownRenderer.enabled = !ownRenderer.enabled;
+            
+            //wait for a bit
+            yield return new WaitForSeconds(seconds);
+        }
+        
+        //make sure renderer is enabled when we exit
+        ownRenderer.enabled = true;
     }
 
     /*
