@@ -41,6 +41,24 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Fondo
+  - name: Background
     uniqueID: 1889756225
+    locked: 0
+  - name: Props
+    uniqueID: 1401636257
+    locked: 0
+  - name: Props2
+    uniqueID: 51055707
+    locked: 0
+  - name: triggers
+    uniqueID: 522227581
+    locked: 0
+  - name: Foreground
+    uniqueID: 3561828179
+    locked: 0
+  - name: Stairs
+    uniqueID: 2404449231
+    locked: 0
+  - name: Player
+    uniqueID: 1823472025
     locked: 0
