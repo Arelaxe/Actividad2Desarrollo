@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private float direction = 1.0f;
     private bool grounded;
     private bool isTakingDamage = false;
+    private bool isAttacking = false;
 
     // Audio Sources
     private AudioSource mainAudioSource;
@@ -146,13 +147,17 @@ public class PlayerController : MonoBehaviour
 
     // Attack action
     private void Attack(){
-        // Update animations and sounds
-        animator.SetTrigger("attack");
-        mainAudioSource.PlayOneShot(swordSound);
-        walkSoundController.enabled = false;
+        if (!isAttacking){ 
+            isAttacking = true;
 
-        // Start attack coroutine
-        StartCoroutine(ExecuteAttack());
+            // Update animations and sounds
+            animator.SetTrigger("attack");
+            mainAudioSource.PlayOneShot(swordSound);
+            walkSoundController.enabled = false;
+
+            // Start attack coroutine
+            StartCoroutine(ExecuteAttack());
+        }
     }
 
     // Dash action
@@ -197,7 +202,7 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(walkAction.ReadValue<Vector2>().x * speed, rb.velocity.y); 
         }
         else{ // We stop the motion if we are attacking
-            rb.velocity = new Vector2(0f, 0f);
+            rb.velocity = new Vector2(0f, rb.velocity.y);
         }
     }
 
@@ -235,6 +240,8 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(enemy.gameObject.GetComponent<NPC>().TakeHit(gameObject, attackValue));
             }
         }
+
+        isAttacking = false;
     }
 
     IEnumerator Inmunity() {
