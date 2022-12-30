@@ -142,7 +142,7 @@ public abstract class NPC : MonoBehaviour
         float originOffsetX = Mathf.Sign(transform.localScale.x) == -1 ? visionConeOriginOffset.x * -1 : visionConeOriginOffset.x;
         Vector3 origin = new(transform.position.x + originOffsetX, transform.position.y + visionConeOriginOffset.y, transform.position.z);
 
-        visionHits = CollisionUtils.RaycastArc(10, visionConeAngle, origin, 0, direction, visionConeDistance, LayerMask.GetMask("Default"));
+        visionHits = CollisionUtils.RaycastArc(10, visionConeAngle, origin, 0, direction, visionConeDistance, LayerMask.GetMask("Foreground"));
     }
 
     public IEnumerator WaitForAnimStart(string name)
