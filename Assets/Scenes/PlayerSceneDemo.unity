@@ -582,7 +582,7 @@ MonoBehaviour:
   speed: 5
   dashSpeed: 15
   jumpForce: 200
-  attackDelay: 0.75
+  attackDelay: 0.5
   swordSound: {fileID: 8300000, guid: 093e19db965c7ef4e80d04a456b71b9d, type: 3}
   jumpSound: {fileID: 8300000, guid: b8d70620b50eefd4a96d3a903b63c9e1, type: 3}
   dashSound: {fileID: 8300000, guid: b91587b6e076a594c9f32470b95aa279, type: 3}
