@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Guardian : Enemy
 {
-    //Commit
     [SerializeField] private float distancing;
     [SerializeField] private float attackRate;
     private bool attacking;
@@ -12,9 +11,8 @@ public class Guardian : Enemy
 
     [Header("Chasing")]
     [SerializeField] private float maxChasingRange;
-    private float guardingPoint;
+    [SerializeField] private float guardingPoint;
     private GameObject target;
-    [SerializeField] private AudioClip attackSound;
 
     protected override void Start()
     {
@@ -24,10 +22,11 @@ public class Guardian : Enemy
 
     protected override void Update()
     {
-        base.Update();
-
+        VisionCone();
         DetectTarget();
+        RoutineMovement();
         ChaseTarget();
+        CheckCollisions();
     }
 
     protected override void AfterTakeHit(GameObject source)
@@ -62,13 +61,13 @@ public class Guardian : Enemy
 
     protected void ChaseTarget()
     {
-        if (target != null && !continueRoutine && health > 0)
+        if (target != null && !continueRoutine && IsAlive())
         {
             float x = GetDistancedWaypoint(target);
 
             if (IsWaypointInRange(x))
             {
-                Vector2 targetPosition = new(x, transform.position.y);
+                Vector2 targetPosition = new(x, target.transform.position.y);
 
                 if (IsWaypointReached(targetPosition))
                 {
@@ -102,8 +101,10 @@ public class Guardian : Enemy
         if (Time.time > nextAttack)
         {
             nextAttack = Time.time + attackRate;
+
             animator.SetTrigger("Attack");
             mainAudioSource.PlayOneShot(attackSound);
+
             attacking = true;
         }
     }
@@ -120,6 +121,8 @@ public class Guardian : Enemy
             MoveToWaypoint(targetPosition);
         }
     }
+
+    // Auxiliar methods
 
     private float GetDistancedWaypoint(GameObject availableTarget)
     {

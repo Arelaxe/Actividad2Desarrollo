@@ -7,7 +7,7 @@ public abstract class Enemy : NPC
     [Header("Combat")]
     [SerializeField] private float damage;
     [SerializeField] private bool damageFramePlaying;
-
+    [SerializeField] protected AudioClip attackSound;
 
     protected override bool ShouldStop()
     {

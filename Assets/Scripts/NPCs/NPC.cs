@@ -7,56 +7,105 @@ public abstract class NPC : MonoBehaviour
 {
     [Header("General")]
     [SerializeField] protected float health;
-
-    [Header("Routine")]
-    [SerializeField] protected Vector2[] waypoints;
-    protected int current = 0;
-    protected float waypointRadius = 0.1f;
-    protected bool continueRoutine = true;
     protected bool takingHit;
-
-    [SerializeField] protected float speed;
-    [SerializeField] protected float stopTime;
-    [SerializeField] protected bool flip;
+    [SerializeField] private AudioClip hitSound;
+    [SerializeField] private AudioClip deathSound;
+    protected BoxCollider2D bc;
+    protected Rigidbody2D rb;
+    protected AudioSource mainAudioSource;
+    protected Animator animator;
 
     [Header("Vision")]
     [SerializeField] private Vector2 visionConeOriginOffset;
     [SerializeField] private float visionConeAngle;
     [SerializeField] private float visionConeDistance;
-
-    [SerializeField] private AudioClip hitSound;
-    [SerializeField] private AudioClip deathSound;
-    protected AudioSource mainAudioSource;
     protected RaycastHit2D[] visionHits;
 
-    protected Animator animator;
+    [Header("Routine")]
+    [SerializeField] protected Vector2[] waypoints;
+    protected int current = 0;
+    [SerializeField] protected float waypointRadius = 1f;
+    protected bool continueRoutine = true;
+    [SerializeField] protected float speed;
+    [SerializeField] protected float stopTime;
+    [SerializeField] protected bool flip;
+    [SerializeField] protected bool canFly;
+    protected Vector2 movement;
+    protected RaycastHit2D[] movementHits;
+    protected bool reached;
 
     protected virtual void Start()
     {
         mainAudioSource = Camera.main.GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
+        bc = GetComponent<BoxCollider2D>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     protected virtual void Update()
     {
-        RoutineMovement();
         VisionCone();
+        RoutineMovement();
+        CheckCollisions();
     }
+
+    // General
+
+    public IEnumerator TakeHit(GameObject source, float damage)
+    {
+        if (IsAlive())
+        {
+            health -= damage;
+
+            mainAudioSource.PlayOneShot(hitSound);
+
+            animator.SetTrigger("Take Hit");
+
+            yield return StartCoroutine(WaitForAnimStart("TakeHit"));
+            takingHit = true;
+
+            yield return StartCoroutine(WaitForAnimEnd());
+            takingHit = false;
+
+            if (IsAlive())
+            {
+                AfterTakeHit(source);
+            }
+            else
+            {
+                continueRoutine = false;
+                animator.SetTrigger("Die");
+                GetComponent<Collider2D>().isTrigger = true;
+
+                yield return StartCoroutine(WaitForAnimStart("Death"));
+                mainAudioSource.PlayOneShot(deathSound);
+
+                AfterDeath();
+            }
+        }
+    }
+
+    protected abstract void AfterTakeHit(GameObject source);
+    protected abstract void AfterDeath();
+
+    // Vision
+
+    protected void VisionCone()
+    {
+        Vector2 direction = Mathf.Sign(transform.localScale.x) == -1 ? Vector2.left : Vector2.right;
+        float originOffsetX = Mathf.Sign(transform.localScale.x) == -1 ? visionConeOriginOffset.x * -1 : visionConeOriginOffset.x;
+        Vector3 origin = new(transform.position.x + originOffsetX, transform.position.y + visionConeOriginOffset.y, transform.position.z);
+
+        visionHits = CollisionUtils.RaycastArc(10, visionConeAngle, origin, 0, direction, visionConeDistance, LayerMask.GetMask("Player"));
+    }
+
+    // Routine
 
     protected void RoutineMovement()
     {
         if (IsWaypointReached(waypoints[current]))
         {
-            current++;
-            if (current >= waypoints.Length)
-            {
-                current = 0;
-            }
-
-            if (ShouldStop())
-            {
-                StartCoroutine(Stop());
-            }
+            NextWaypoint();
         }
 
         if (continueRoutine)
@@ -70,7 +119,22 @@ public abstract class NPC : MonoBehaviour
 
     protected bool IsWaypointReached(Vector2 waypoint)
     {
-        return Vector2.Distance(waypoint, transform.position) < waypointRadius;
+        float waypointY = canFly ? waypoint.y : transform.position.y;
+        return Vector2.Distance(new Vector2(waypoint.x, waypointY), transform.position) < waypointRadius;
+    }
+
+    protected void NextWaypoint()
+    {
+        current++;
+        if (current >= waypoints.Length)
+        {
+            current = 0;
+        }
+
+        if (ShouldStop())
+        {
+            StartCoroutine(Stop());
+        }
     }
 
     protected void MoveToWaypoint(Vector2 waypoint)
@@ -81,8 +145,11 @@ public abstract class NPC : MonoBehaviour
             {
                 CheckFlip(waypoint);
             }
-            transform.position = Vector2.MoveTowards(transform.position, waypoint, Time.deltaTime * speed);
 
+            float movementY = canFly ? (waypoint.y - transform.position.y) : 0;
+            movement = new(waypoint.x - transform.position.x, movementY);
+            rb.velocity = movement.normalized * speed;
+            
             animator.SetBool("Walking", true);
         }
     }
@@ -103,54 +170,33 @@ public abstract class NPC : MonoBehaviour
         animator.SetBool("Walking", false);
         yield return new WaitForSeconds(stopTime);
 
-        if (health > 0)
+        if (IsAlive())
         {
             continueRoutine = true;
         }
     }
 
-    public IEnumerator TakeHit(GameObject source, float damage)
+    // Collisions
+    protected void CheckCollisions()
     {
-        if (health > 0)
+        movementHits = CollisionUtils.RaycastMovement(bc.bounds, movement, 10, 0.1f, LayerMask.GetMask("Default"));
+        if (CollisionUtils.Count(movementHits, "Ground") > 0 && !reached)
         {
-            health -= damage;
-
-            mainAudioSource.PlayOneShot(hitSound);
-
-            animator.SetTrigger("Take Hit");
-
-            yield return StartCoroutine(WaitForAnimStart("TakeHit"));
-            takingHit = true; 
-
-            yield return StartCoroutine(WaitForAnimEnd());
-            takingHit = false;
-
-            if (health > 0)
-            {
-                AfterTakeHit(source);
-            }
-            else
-            {
-                animator.SetTrigger("Die");
-                continueRoutine = false;
-                GetComponent<Collider2D>().isTrigger = true;
-                yield return StartCoroutine(WaitForAnimStart("Death"));
-                mainAudioSource.PlayOneShot(deathSound);
-                AfterDeath();
-            }
+            reached = true;
+            NextWaypoint();
         }
+        else if (CollisionUtils.Count(movementHits, "Ground") == 0 && reached)
+        {
+            reached = false;
+        }
+
     }
 
-    protected abstract void AfterTakeHit(GameObject source);
-    protected abstract void AfterDeath();
+    // Auxiliar methods
 
-    protected void VisionCone()
+    protected bool IsAlive()
     {
-        Vector2 direction = Mathf.Sign(transform.localScale.x) == -1 ? Vector2.left : Vector2.right;
-        float originOffsetX = Mathf.Sign(transform.localScale.x) == -1 ? visionConeOriginOffset.x * -1 : visionConeOriginOffset.x;
-        Vector3 origin = new(transform.position.x + originOffsetX, transform.position.y + visionConeOriginOffset.y, transform.position.z);
-
-        visionHits = CollisionUtils.RaycastArc(10, visionConeAngle, origin, 0, direction, visionConeDistance, LayerMask.GetMask("Player"));
+        return health > 0;
     }
 
     public IEnumerator WaitForAnimStart(string name)
