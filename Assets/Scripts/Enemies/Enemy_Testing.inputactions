@@ -1,0 +1,34 @@
+{
+    "name": "Enemy_Testing",
+    "maps": [
+        {
+            "name": "Test",
+            "id": "94243147-2f81-402b-bbb9-324a04d1bfb4",
+            "actions": [
+                {
+                    "name": "Take Hit",
+                    "type": "Button",
+                    "id": "b3f4ae6f-7d9a-47c5-bac5-f0b53ffcfc1d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b43d77ae-6982-4436-9bf0-0cefcb7b0631",
+                    "path": "<Keyboard>/h",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Take Hit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
