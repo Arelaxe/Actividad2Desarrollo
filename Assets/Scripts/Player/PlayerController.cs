@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     private bool grounded;
     private bool isTakingDamage = false;
     private bool isAttacking = false;
+    private bool isDead = false;
+    private bool isDashing = false;
 
     // Audio Sources
     private AudioSource mainAudioSource;
@@ -77,26 +79,31 @@ public class PlayerController : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        Walk();
+        if (!isDead){
+            Walk();
 
-        if (grounded && jumpAction.triggered){
-            Jump();
-        }
+            if (grounded && jumpAction.triggered){
+                Jump();
+            }
 
-        if (attackAction.triggered){
-            Attack();
-        }
+            if (!isAttacking && attackAction.triggered){
+                Attack();
+            }
 
-        if (dashAction.triggered){
-            Dash();
+            if (!isDashing && dashAction.triggered){
+                isDashing = true;
+                Dash();
+            }
         }
     }
 
     // Frame-rate independent function for physics calculations
     private void FixedUpdate() {
-        WalkPhysics();
-        DashPhysics();
-        CheckIsGrounded();
+        if (!isDead){
+            WalkPhysics();
+            DashPhysics();
+            CheckIsGrounded();
+        }
     }
 
     /*
@@ -147,23 +154,22 @@ public class PlayerController : MonoBehaviour
 
     // Attack action
     private void Attack(){
-        if (!isAttacking){ 
-            isAttacking = true;
+        isAttacking = true;
 
-            // Update animations and sounds
-            animator.SetTrigger("attack");
-            mainAudioSource.PlayOneShot(swordSound);
-            walkSoundController.enabled = false;
+        // Update animations and sounds
+        animator.SetTrigger("attack");
+        mainAudioSource.PlayOneShot(swordSound);
+        walkSoundController.enabled = false;
 
-            // Start attack coroutine
-            StartCoroutine(ExecuteAttack());
-        }
+        // Start attack coroutine
+        StartCoroutine(ExecuteAttack());
     }
 
     // Dash action
     private void Dash(){
         animator.SetTrigger("dash");
         mainAudioSource.PlayOneShot(dashSound);
+        isDashing = false;
     }
 
     /*
@@ -184,11 +190,14 @@ public class PlayerController : MonoBehaviour
 
             // If our health reaches 0, we die and the game is over
             if (health <= 0){
+                isDead = true;
                 animator.SetTrigger("dead");
                 mainAudioSource.PlayOneShot(gameOverSound);
+                Destroy(rb);
             }
-
-            StartCoroutine(Inmunity());
+            else{
+                StartCoroutine(Inmunity());
+            }
         }
     }
 
@@ -208,7 +217,7 @@ public class PlayerController : MonoBehaviour
 
     // Physics for the dash action
     private void DashPhysics() {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dash")){
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dash") && !isDashing){
             rb.velocity = new Vector2(direction * dashSpeed, rb.velocity.y); 
         }
     }
