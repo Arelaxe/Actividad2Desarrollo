@@ -6,6 +6,11 @@ public class CameraScript : MonoBehaviour
 {
     [SerializeField] private GameObject player;
 
+    private void Start()
+    {
+        Physics2D.IgnoreLayerCollision(6, 6, true);
+    }
+
     // Update is called once per frame
     void Update()
     {

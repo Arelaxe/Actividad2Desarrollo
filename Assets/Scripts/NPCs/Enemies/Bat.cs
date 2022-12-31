@@ -14,7 +14,7 @@ public class Bat : Enemy
         base.Update();
 
         DetectTarget();
-        if (target != null)
+        if (target != null && IsAlive())
         {
             CheckFlip(target.transform.position);
         }
@@ -27,29 +27,9 @@ public class Bat : Enemy
 
     protected override void AfterDeath() 
     {
-        GetComponent<Rigidbody2D>().velocity = Vector2.down * 2;
-    }
-
-    private void OnCollisionStay2D(Collision2D collision) {
-        if (collision.collider.name == "Player")
-        {
-            collision.gameObject.GetComponent<PlayerController>().Hit();
-        }
-    }
-    protected void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.collider.name == "Player")
-        {
-            collision.gameObject.GetComponent<PlayerController>().Hit();
-        }
-    }
-
-    protected void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Ground"))
-        {
-            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        }
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        rb.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
+        rb.velocity = Vector2.down * 2;
     }
 
     protected void DetectTarget()
@@ -64,4 +44,29 @@ public class Bat : Enemy
         }
     }
 
+    // Collisions
+
+    protected void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.name == "Player")
+        {
+            collision.gameObject.GetComponent<PlayerController>().Hit();
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.collider.name == "Player")
+        {
+            collision.gameObject.GetComponent<PlayerController>().Hit();
+        }
+    }
+
+    protected void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ground"))
+        {
+            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        }
+    }
 }

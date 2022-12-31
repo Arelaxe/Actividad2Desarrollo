@@ -142,19 +142,19 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1503170836681084799}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 100
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &1503170836681084795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,17 +168,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 5
-  waypoints:
-  - {x: 9.8, y: -2.79}
-  - {x: 8, y: -2.79}
-  speed: 0.2
-  stopTime: 0
-  flip: 0
+  hitSound: {fileID: 8300000, guid: 986b10a99bdfaf344839944be6ceb2ce, type: 3}
+  deathSound: {fileID: 8300000, guid: 60b54b77c901c57459093e9939cad5fb, type: 3}
   visionConeOriginOffset: {x: 0.4, y: 0}
   visionConeAngle: 45
   visionConeDistance: 5
-  hitSound: {fileID: 8300000, guid: 986b10a99bdfaf344839944be6ceb2ce, type: 3}
-  deathSound: {fileID: 8300000, guid: 60b54b77c901c57459093e9939cad5fb, type: 3}
+  waypoints:
+  - {x: 24.32, y: -1.17}
+  - {x: 24.32, y: -2.5}
+  waypointRadius: 0.1
+  speed: 1
+  stopTime: 0
+  flip: 0
   damage: 3
   damageFramePlaying: 0
+  attackSound: {fileID: 0}
   speedMultiplier: 2
