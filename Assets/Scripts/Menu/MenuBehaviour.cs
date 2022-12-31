@@ -9,6 +9,14 @@ public class MenuBehaviour : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
+    public void Controles(){
+        SceneManager.LoadScene("Controles");
+    }
+
+    public void Volver(){
+        SceneManager.LoadScene("MenuInicial");
+    }
+
     public void Salir(){
         Debug.Log("Saliendo...");
         Application.Quit();
