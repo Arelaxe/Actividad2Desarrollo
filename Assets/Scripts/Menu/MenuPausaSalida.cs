@@ -7,31 +7,20 @@ public class MenuPausaSalida : MonoBehaviour
 {
     [SerializeField] private GameObject ExitPanel;
 
-    public void Jugar()
-    {
+    public void Jugar(){
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
-    public void MenuPrincipal()
-    {
-        if (SceneManager.GetActiveScene().buildIndex == 1)
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
-        }
-        else if (SceneManager.GetActiveScene().buildIndex == 2)
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 2);
-        }
+    public void MenuPrincipal(){
+        SceneManager.LoadScene("MenuInicial");
     }
 
-    public void Resume()
-    {
+    public void Resume(){
         Time.timeScale = 1f;
         ExitPanel.SetActive(false);
     }
 
-    public void Salir()
-    {
+    public void Salir(){
         Debug.Log("Saliendo...");
         Application.Quit();
     }
