@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 /*
     Main character logic
@@ -206,6 +207,8 @@ public class PlayerController : MonoBehaviour
                 animator.SetTrigger("dead");
                 mainAudioSource.PlayOneShot(gameOverSound);
                 Destroy(rb);
+                //wait for a bit and call the GameOver scene
+                Invoke("GameEnd", 2);
             }
             else{
                 StartCoroutine(Inmunity());
@@ -240,6 +243,10 @@ public class PlayerController : MonoBehaviour
     private void CheckIsGrounded() {
         Debug.DrawRay(transform.position, Vector3.down*1.5f, Color.green);
         grounded = Physics2D.Raycast(transform.position, Vector3.down, 1.5f);
+    }
+    private void GameEnd()
+    {
+        SceneManager.LoadScene("GameOver");
     }
 
     /*

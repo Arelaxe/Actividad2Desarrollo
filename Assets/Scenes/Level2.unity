@@ -4866,6 +4866,7 @@ GameObject:
   - component: {fileID: 1397136117}
   - component: {fileID: 1397136116}
   - component: {fileID: 1397136115}
+  - component: {fileID: 1397136120}
   m_Layer: 0
   m_Name: Triggers
   m_TagString: Untagged
@@ -4905,9 +4906,23 @@ CompositeCollider2D:
   m_GeometryType: 0
   m_GenerationType: 0
   m_EdgeRadius: 0
-  m_ColliderPaths: []
+  m_ColliderPaths:
+  - m_Collider: {fileID: 1397136117}
+    m_ColliderPaths:
+    - - X: 1101800064
+        Y: -8600000
+      - X: 1101800064
+        Y: -41400000
+      - X: 1108199936
+        Y: -41400000
+      - X: 1108199936
+        Y: -8600000
   m_CompositePaths:
-    m_Paths: []
+    m_Paths:
+    - - {x: 110.81997, y: -4.14}
+      - {x: 110.81997, y: -0.86}
+      - {x: 110.18001, y: -0.86002934}
+      - {x: 110.18003, y: -4.14}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
 --- !u!50 &1397136116
@@ -4943,7 +4958,7 @@ TilemapCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_UsedByComposite: 1
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0.00001
@@ -5110,6 +5125,18 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &1397136120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397136113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef250666bf003744e8094a12d01b7acb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1478854909
 GameObject:
   m_ObjectHideFlags: 0
@@ -6194,6 +6221,7 @@ MonoBehaviour:
   attackValue: 2
   attackDelay: 0.5
   inmunityTime: 2
+  dashCoolDownTime: 2
   swordSound: {fileID: 8300000, guid: 093e19db965c7ef4e80d04a456b71b9d, type: 3}
   jumpSound: {fileID: 8300000, guid: b8d70620b50eefd4a96d3a903b63c9e1, type: 3}
   dashSound: {fileID: 8300000, guid: b91587b6e076a594c9f32470b95aa279, type: 3}
