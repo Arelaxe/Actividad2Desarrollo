@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     private bool isAttacking = false;
     private bool isDead = false;
     private bool canPressDash = true;
+    private bool paused = false;
 
     // Audio Sources
     private AudioSource mainAudioSource;
@@ -202,8 +203,16 @@ public class PlayerController : MonoBehaviour
 
     // Pause action
     private void Pause(){
-        Time.timeScale = 0f;
-        menuPause.SetActive(true);
+        if(!paused){
+            paused = true;
+            Time.timeScale = 0f;
+            menuPause.SetActive(true);
+        }
+        else{
+            paused = false;
+            Time.timeScale = 1.0f;
+            menuPause.SetActive(false);
+        }
     }
 
     /*
