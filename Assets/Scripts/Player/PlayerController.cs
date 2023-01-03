@@ -123,6 +123,12 @@ public class PlayerController : MonoBehaviour
             WalkPhysics();
             DashPhysics();
             CheckIsGrounded();
+            AvoidFreeze();
+        }
+        else{
+            if (grounded){
+                Destroy(rb);
+            }
         }
     }
 
@@ -239,7 +245,6 @@ public class PlayerController : MonoBehaviour
                 isDead = true;
                 animator.SetTrigger("dead");
                 mainAudioSource.PlayOneShot(gameOverSound);
-                Destroy(rb);
                 //wait for a bit and call the GameOver scene
                 Invoke("GameEnd", 2);
             }
@@ -256,8 +261,8 @@ public class PlayerController : MonoBehaviour
 
     // Physics for the walk action
     private void WalkPhysics() {
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack")){ 
-            rb.velocity = new Vector2(walkAction.ReadValue<Vector2>().x * speed, rb.velocity.y); 
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !Physics2D.Raycast (new Vector2(transform.position.x + 0.2f, transform.position.y), Vector2.right* direction*0.5f, 0.0f, 6)){
+           rb.velocity = new Vector2(walkAction.ReadValue<Vector2>().x * speed, rb.velocity.y); 
         }
         else{ // We stop the motion if we are attacking
             rb.velocity = new Vector2(0f, rb.velocity.y);
@@ -272,11 +277,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void AvoidFreeze() {
+        Debug.DrawRay(new Vector2(transform.position.x + 0.2f, transform.position.y), Vector2.right * direction*0.5f, Color.red);
+        bool chocao = Physics2D.Raycast (new Vector2(transform.position.x + 0.2f, transform.position.y), Vector2.right * direction*0.5f, 0.0f, 6);
+        Debug.Log(chocao);
+        if (chocao){
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }    
+    }
+
     // Checks whether we are grounded or not
     private void CheckIsGrounded() {
         Debug.DrawRay(transform.position, Vector3.down*1.5f, Color.green);
         grounded = Physics2D.Raycast(transform.position, Vector3.down, 1.5f);
     }
+
     private void GameEnd()
     {
         SceneManager.LoadScene("GameOver");
