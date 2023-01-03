@@ -604,7 +604,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Salir
+  m_text: Exit
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e3a30d466093545429e29ebcd163ddb6, type: 2}
   m_sharedMaterial: {fileID: 6069474096137788995, guid: e3a30d466093545429e29ebcd163ddb6, type: 2}
@@ -823,7 +823,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Jugar
+  m_text: Play
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e3a30d466093545429e29ebcd163ddb6, type: 2}
   m_sharedMaterial: {fileID: 6069474096137788995, guid: e3a30d466093545429e29ebcd163ddb6, type: 2}
@@ -1055,7 +1055,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Controles
+  m_text: Controls
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e3a30d466093545429e29ebcd163ddb6, type: 2}
   m_sharedMaterial: {fileID: 6069474096137788995, guid: e3a30d466093545429e29ebcd163ddb6, type: 2}
