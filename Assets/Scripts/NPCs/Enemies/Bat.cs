@@ -14,7 +14,7 @@ public class Bat : Enemy
         base.Update();
 
         DetectTarget();
-        if (target != null && IsAlive())
+        if (target != null && IsAlive() && !flip)
         {
             CheckFlip(target.transform.position);
         }
@@ -27,9 +27,7 @@ public class Bat : Enemy
 
     protected override void AfterDeath() 
     {
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        rb.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
-        rb.velocity = Vector2.down * 2;
+        rb.velocity = Vector2.down * 5;
     }
 
     protected void DetectTarget()
@@ -62,11 +60,4 @@ public class Bat : Enemy
         }
     }
 
-    protected void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Ground"))
-        {
-            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        }
-    }
 }
