@@ -306,12 +306,15 @@ MonoBehaviour:
   attackRange: 1.1
   speed: 5
   health: 3
+  maxHealth: 0
   dashSpeed: 15
   jumpForce: 250
   attackValue: 2
   attackDelay: 0.5
   inmunityTime: 1.5
   dashCoolDownTime: 2
+  healthBar: {fileID: 741092337}
+  menuPause: {fileID: 0}
   swordSound: {fileID: 8300000, guid: 093e19db965c7ef4e80d04a456b71b9d, type: 3}
   jumpSound: {fileID: 8300000, guid: b8d70620b50eefd4a96d3a903b63c9e1, type: 3}
   dashSound: {fileID: 8300000, guid: b91587b6e076a594c9f32470b95aa279, type: 3}
@@ -2902,6 +2905,7 @@ GameObject:
   - component: {fileID: 741092334}
   - component: {fileID: 741092336}
   - component: {fileID: 741092335}
+  - component: {fileID: 741092337}
   m_Layer: 5
   m_Name: Life
   m_TagString: Untagged
@@ -2967,6 +2971,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 741092333}
   m_CullTransparentMesh: 1
+--- !u!114 &741092337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741092333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ce32d9804d6e364fb5bcc5a98e6eb78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &787757793
 GameObject:
   m_ObjectHideFlags: 0

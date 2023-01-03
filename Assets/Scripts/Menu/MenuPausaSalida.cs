@@ -16,7 +16,7 @@ public class MenuPausaSalida : MonoBehaviour
     }
 
     public void Resume(){
-        Time.timeScale = 1f;
+        Time.timeScale = 1.0f;
         ExitPanel.SetActive(false);
     }
 

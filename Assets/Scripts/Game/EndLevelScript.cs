@@ -6,6 +6,6 @@ using UnityEngine;
 public class EndLevelScript : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other) {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene("EndCredits");
     }
 }

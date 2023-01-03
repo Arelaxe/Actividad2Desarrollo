@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private InputAction jumpAction;
     private InputAction attackAction;
     private InputAction dashAction;
+    private InputAction pauseAction;
 
     // Components
     private Collider2D ownCollider;
@@ -44,7 +45,8 @@ public class PlayerController : MonoBehaviour
     // Serialized values
     [SerializeField] private float attackRange = 0.5f;
     [SerializeField] private float speed = 10;
-    [SerializeField] private int health = 3;
+    [SerializeField] private float health;
+    [SerializeField] private float maxHealth = 100;
     [SerializeField] private float dashSpeed = 50;
     [SerializeField] private float jumpForce = 200;
     [SerializeField] private float attackValue = 2.0f;
@@ -52,6 +54,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float inmunityTime = 2.0f;
     [SerializeField] private float dashCoolDownTime = 2.0f;
     
+    // HUD Objects
+    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private GameObject menuPause;
+
     // Audio clips
     [SerializeField] private AudioClip swordSound;
     [SerializeField] private AudioClip jumpSound;
@@ -79,6 +85,11 @@ public class PlayerController : MonoBehaviour
         jumpAction = playerInput.actions["Saltar"];
         attackAction = playerInput.actions["Atacar"];
         dashAction = playerInput.actions["Dash"];
+        pauseAction = playerInput.actions["Pause"];
+
+        // Initialization of HUD values
+        health = maxHealth;
+        healthBar.InitializeHealthBar(health);
     }
 
     // Update is called once per frame
@@ -97,6 +108,10 @@ public class PlayerController : MonoBehaviour
             if (dashAction.triggered && canPressDash){
                 canPressDash = false;
                 Dash();
+            }
+
+            if(pauseAction.triggered){
+                Pause();
             }
         }
     }
@@ -185,6 +200,12 @@ public class PlayerController : MonoBehaviour
         mainAudioSource.PlayOneShot(dashSound);
     }
 
+    // Pause action
+    private void Pause(){
+        Time.timeScale = 0f;
+        menuPause.SetActive(true);
+    }
+
     /*
         Passive actions
     */
@@ -195,7 +216,10 @@ public class PlayerController : MonoBehaviour
             isTakingDamage = true;
             
             // Reduce player's health
-            health--;
+            health-= 20;
+
+            // Update HUD values
+            healthBar.ChangeActualHealth(health);
 
             // Update animations and sounds
             animator.SetTrigger("hurt");
@@ -212,7 +236,7 @@ public class PlayerController : MonoBehaviour
             }
             else{
                 StartCoroutine(Inmunity());
-                StartCoroutine(DoBlinks(4, inmunityTime/4));
+                StartCoroutine(DoBlinks(4, inmunityTime/12));
             }
         }
     }
@@ -285,7 +309,7 @@ public class PlayerController : MonoBehaviour
     }
 
     IEnumerator DoBlinks(int numBlinks, float seconds) {
-        for (int i=0; i<numBlinks*2; i++) {
+        for (int i=0; i<numBlinks*3; i++) {
         
             //toggle renderer
             ownRenderer.enabled = !ownRenderer.enabled;
