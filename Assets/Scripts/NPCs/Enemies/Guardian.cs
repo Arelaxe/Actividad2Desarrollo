@@ -14,12 +14,6 @@ public class Guardian : Enemy
     [SerializeField] private float guardingPoint;
     private GameObject target;
 
-    protected override void Start()
-    {
-        base.Start();
-        guardingPoint = transform.position.x;
-    }
-
     protected override void Update()
     {
         VisionCone();
@@ -119,6 +113,10 @@ public class Guardian : Enemy
         else
         {
             MoveToWaypoint(targetPosition);
+            if (CollisionUtils.Count(movementHits, "Ground") > 0)
+            {
+                animator.SetBool("Walking", false);
+            }
         }
     }
 

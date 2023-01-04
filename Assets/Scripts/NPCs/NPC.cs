@@ -75,7 +75,7 @@ public abstract class NPC : MonoBehaviour
             {
                 continueRoutine = false;
                 animator.SetTrigger("Die");
-                GetComponent<Collider2D>().isTrigger = true;
+                gameObject.layer = LayerMask.NameToLayer("Player Ignore");
 
                 yield return StartCoroutine(WaitForAnimStart("Death"));
                 mainAudioSource.PlayOneShot(deathSound);
@@ -139,7 +139,11 @@ public abstract class NPC : MonoBehaviour
 
     protected void MoveToWaypoint(Vector2 waypoint)
     {
-        if (!takingHit)
+        if (takingHit)
+        {
+            rb.velocity = Vector2.zero;
+        }
+        else
         {
             if (flip)
             {
