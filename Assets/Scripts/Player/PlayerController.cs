@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private InputAction jumpAction;
     private InputAction attackAction;
     private InputAction dashAction;
+    private InputAction pauseAction;
 
     // Components
     private Collider2D ownCollider;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
     private bool isAttacking = false;
     private bool isDead = false;
     private bool canPressDash = true;
+    private bool paused = false;
 
     // Audio Sources
     private AudioSource mainAudioSource;
@@ -44,7 +46,8 @@ public class PlayerController : MonoBehaviour
     // Serialized values
     [SerializeField] private float attackRange = 0.5f;
     [SerializeField] private float speed = 10;
-    [SerializeField] private int health = 3;
+    [SerializeField] private float health;
+    [SerializeField] private float maxHealth = 100;
     [SerializeField] private float dashSpeed = 50;
     [SerializeField] private float jumpForce = 200;
     [SerializeField] private float attackValue = 2.0f;
@@ -52,6 +55,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float inmunityTime = 2.0f;
     [SerializeField] private float dashCoolDownTime = 2.0f;
     
+    // HUD Objects
+    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private GameObject menuPause;
+
     // Audio clips
     [SerializeField] private AudioClip swordSound;
     [SerializeField] private AudioClip jumpSound;
@@ -79,6 +86,11 @@ public class PlayerController : MonoBehaviour
         jumpAction = playerInput.actions["Saltar"];
         attackAction = playerInput.actions["Atacar"];
         dashAction = playerInput.actions["Dash"];
+        pauseAction = playerInput.actions["Pause"];
+
+        // Initialization of HUD values
+        health = maxHealth;
+        healthBar.InitializeHealthBar(health);
     }
 
     // Update is called once per frame
@@ -98,6 +110,10 @@ public class PlayerController : MonoBehaviour
                 canPressDash = false;
                 Dash();
             }
+
+            if(pauseAction.triggered){
+                Pause();
+            }
         }
     }
 
@@ -107,6 +123,12 @@ public class PlayerController : MonoBehaviour
             WalkPhysics();
             DashPhysics();
             CheckIsGrounded();
+            AvoidFreeze();
+        }
+        else{
+            if (grounded){
+                Destroy(rb);
+            }
         }
     }
 
@@ -185,6 +207,20 @@ public class PlayerController : MonoBehaviour
         mainAudioSource.PlayOneShot(dashSound);
     }
 
+    // Pause action
+    private void Pause(){
+        if(!paused){
+            paused = true;
+            Time.timeScale = 0f;
+            menuPause.SetActive(true);
+        }
+        else{
+            paused = false;
+            Time.timeScale = 1.0f;
+            menuPause.SetActive(false);
+        }
+    }
+
     /*
         Passive actions
     */
@@ -195,7 +231,10 @@ public class PlayerController : MonoBehaviour
             isTakingDamage = true;
             
             // Reduce player's health
-            health--;
+            health-= 20;
+
+            // Update HUD values
+            healthBar.ChangeActualHealth(health);
 
             // Update animations and sounds
             animator.SetTrigger("hurt");
@@ -206,13 +245,12 @@ public class PlayerController : MonoBehaviour
                 isDead = true;
                 animator.SetTrigger("dead");
                 mainAudioSource.PlayOneShot(gameOverSound);
-                Destroy(rb);
                 //wait for a bit and call the GameOver scene
                 Invoke("GameEnd", 2);
             }
             else{
                 StartCoroutine(Inmunity());
-                StartCoroutine(DoBlinks(4, inmunityTime/4));
+                StartCoroutine(DoBlinks(4, inmunityTime/12));
             }
         }
     }
@@ -223,8 +261,8 @@ public class PlayerController : MonoBehaviour
 
     // Physics for the walk action
     private void WalkPhysics() {
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack")){ 
-            rb.velocity = new Vector2(walkAction.ReadValue<Vector2>().x * speed, rb.velocity.y); 
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !Physics2D.Raycast (new Vector2(transform.position.x + 0.2f, transform.position.y), Vector2.right* direction*0.5f, 0.0f, 6)){
+           rb.velocity = new Vector2(walkAction.ReadValue<Vector2>().x * speed, rb.velocity.y); 
         }
         else{ // We stop the motion if we are attacking
             rb.velocity = new Vector2(0f, rb.velocity.y);
@@ -239,11 +277,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void AvoidFreeze() {
+        Debug.DrawRay(new Vector2(transform.position.x + 0.2f, transform.position.y), Vector2.right * direction*0.5f, Color.red);
+        bool chocao = Physics2D.Raycast (new Vector2(transform.position.x + 0.2f, transform.position.y), Vector2.right * direction*0.5f, 0.0f, 6);
+        Debug.Log(chocao);
+        if (chocao){
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }    
+    }
+
     // Checks whether we are grounded or not
     private void CheckIsGrounded() {
         Debug.DrawRay(transform.position, Vector3.down*1.5f, Color.green);
         grounded = Physics2D.Raycast(transform.position, Vector3.down, 1.5f);
     }
+
     private void GameEnd()
     {
         SceneManager.LoadScene("GameOver");
@@ -285,7 +333,7 @@ public class PlayerController : MonoBehaviour
     }
 
     IEnumerator DoBlinks(int numBlinks, float seconds) {
-        for (int i=0; i<numBlinks*2; i++) {
+        for (int i=0; i<numBlinks*3; i++) {
         
             //toggle renderer
             ownRenderer.enabled = !ownRenderer.enabled;

@@ -9,6 +9,8 @@ public class CameraScript : MonoBehaviour
     private void Start()
     {
         Physics2D.IgnoreLayerCollision(6, 6, true);
+        Physics2D.IgnoreLayerCollision(6, 8, true);
+        Physics2D.IgnoreLayerCollision(3, 8, true);
     }
 
     // Update is called once per frame

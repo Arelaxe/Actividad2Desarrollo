@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class MenuBehaviour : MonoBehaviour
 {
     public void Jugar(){
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene("Level1");
     }
 
     public void Controles(){
