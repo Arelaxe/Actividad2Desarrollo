@@ -122,7 +122,6 @@ public class PlayerController : MonoBehaviour
             WalkPhysics();
             DashPhysics();
             CheckIsGrounded();
-            AvoidFreeze();
         }
         else{
             if (grounded){
@@ -250,9 +249,37 @@ public class PlayerController : MonoBehaviour
         Physics functions
     */
 
+    private bool isCollided;
+    private bool lastCollisionEnded = true;
+    private int lastLayerCollision;
+
+    private void OnCollisionEnter2D(Collision2D other) {
+        if ((other.gameObject.layer == 8 || other.gameObject.layer == 6) && lastCollisionEnded){
+            isCollided = true;
+            lastLayerCollision = other.gameObject.layer;
+            lastCollisionEnded = false;
+        }
+
+        
+
+        if (other.gameObject.layer == 6){
+            Debug.Log("Enemy");
+            Debug.Log(grounded);
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D other) {
+        if (lastLayerCollision == other.gameObject.layer){
+            isCollided = false;
+            lastCollisionEnded = true;
+        }
+    }
+
     // Physics for the walk action
     private void WalkPhysics() {
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && !Physics2D.Raycast (new Vector2(transform.position.x + 0.2f, transform.position.y), Vector2.right* direction*0.5f, 0.0f, 6)){
+        bool canMove = !isCollided || grounded;
+
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && canMove){
            rb.velocity = new Vector2(walkAction.ReadValue<Vector2>().x * speed, rb.velocity.y); 
         }
         else{ // We stop the motion if we are attacking
@@ -268,19 +295,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void AvoidFreeze() {
-        Debug.DrawRay(new Vector2(transform.position.x + 0.2f, transform.position.y), Vector2.right * direction*0.5f, Color.red);
-        bool chocao = Physics2D.Raycast (new Vector2(transform.position.x + 0.2f, transform.position.y), Vector2.right * direction*0.5f, 0.0f, 6);
-        Debug.Log(chocao);
-        if (chocao){
-            rb.velocity = new Vector2(0, rb.velocity.y);
-        }    
-    }
-
     // Checks whether we are grounded or not
     private void CheckIsGrounded() {
-        Debug.DrawRay(transform.position, Vector3.down*1.5f, Color.green);
-        grounded = Physics2D.Raycast(transform.position, Vector3.down, 1.5f);
+        Debug.DrawRay(new Vector2( transform.position.x-direction*0.5f, transform.position.y), Vector3.down*1.2f, Color.green);
+        grounded = Physics2D.Raycast(new Vector2( transform.position.x-direction*0.5f, transform.position.y), Vector3.down, 1.2f);
     }
 
     private void GameEnd()
