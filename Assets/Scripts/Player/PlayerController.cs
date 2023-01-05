@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
     private bool isDead = false;
     private bool canPressDash = true;
     private bool paused = false;
-
+    
     // Audio Sources
     private AudioSource mainAudioSource;
     private AudioSource walkSoundController;
@@ -41,7 +41,6 @@ public class PlayerController : MonoBehaviour
 
     // Layers
     [SerializeField] private LayerMask enemyLayers;
-    [SerializeField] private LayerMask healingLayer;
     
     // Serialized values
     [SerializeField] private float attackRange = 0.5f;
@@ -65,6 +64,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip dashSound;
     [SerializeField] private AudioClip hurtSound;
     [SerializeField] private AudioClip gameOverSound;
+
+    // For collisions
+    private bool isCollided;
+    private bool lastCollisionEnded = true;
+    private GameObject lastObjectCollided;
 
     /*
         Unity functions
@@ -125,9 +129,26 @@ public class PlayerController : MonoBehaviour
             CheckIsGrounded();
         }
         else{
-            if (grounded){
+            if (grounded){ // We destroy de RigidBody 2D when de body reaches the ground
                 Destroy(rb);
             }
+        }
+    }
+
+    // This function is called when the player enters a collisions
+    private void OnCollisionEnter2D (Collision2D other) {
+        if (lastCollisionEnded){
+            isCollided = true;
+            lastObjectCollided = other.gameObject;
+            lastCollisionEnded = false;
+        }
+    }
+
+    // This function is called when the player exits a collision
+    void OnCollisionExit2D(Collision2D other) {
+        if (lastObjectCollided == other.gameObject){
+            isCollided = false;
+            lastCollisionEnded = true;
         }
     }
 
@@ -139,7 +160,6 @@ public class PlayerController : MonoBehaviour
     private void Walk(){
         if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack")){ // We don't want the character to move while attacking
             float horizontal = walkAction.ReadValue<Vector2>().x;
-            float oldDirection = direction;
 
             // We don't make any sounds if the character it's not moving or if it's not executing the proper animation
             if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Run") || horizontal == 0.0f){
@@ -157,15 +177,6 @@ public class PlayerController : MonoBehaviour
             // We rotate the character depending on the direction it is moving
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * direction, transform.localScale.y, transform.localScale.z);
             
-            if (direction != oldDirection){
-                if (direction < 0){
-                    transform.position = new Vector3(transform.position.x - 0.2f, transform.position.y, transform.position.z);
-                }
-                else if (direction > 0){
-                    transform.position = new Vector3(transform.position.x + 0.2f, transform.position.y, transform.position.z);
-                }
-            }
-
             // We update the animation bool
             if (horizontal == 0.0f){
                 animator.SetBool("isWalking", false);
@@ -227,6 +238,7 @@ public class PlayerController : MonoBehaviour
     // This function is called when they hit us
     public void Hit(){
         if (!isTakingDamage){
+            // We set this trigger to apply inmunity after taking a hit
             isTakingDamage = true;
             
             // Reduce player's health
@@ -248,6 +260,7 @@ public class PlayerController : MonoBehaviour
                 Invoke("GameEnd", 2);
             }
             else{
+                // We set inmunity for a time and we make the character blink
                 StartCoroutine(Inmunity());
                 StartCoroutine(DoBlinks(4, inmunityTime/12));
             }
@@ -258,34 +271,9 @@ public class PlayerController : MonoBehaviour
         Physics functions
     */
 
-    private bool isCollided;
-    private bool lastCollisionEnded = true;
-    private int lastLayerCollision;
-
-    private void OnCollisionEnter2D(Collision2D other) {
-        if ((other.gameObject.layer == 8 || other.gameObject.layer == 6) && lastCollisionEnded){
-            isCollided = true;
-            lastLayerCollision = other.gameObject.layer;
-            lastCollisionEnded = false;
-        }
-
-        
-
-        if (other.gameObject.layer == 6){
-            Debug.Log("Enemy");
-            Debug.Log(grounded);
-        }
-    }
-
-    void OnCollisionExit2D(Collision2D other) {
-        if (lastLayerCollision == other.gameObject.layer){
-            isCollided = false;
-            lastCollisionEnded = true;
-        }
-    }
-
     // Physics for the walk action
     private void WalkPhysics() {
+        // This bool fixes a bug that happened when colliding with walls
         bool canMove = !isCollided || grounded;
 
         if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && canMove){
@@ -306,12 +294,19 @@ public class PlayerController : MonoBehaviour
 
     // Checks whether we are grounded or not
     private void CheckIsGrounded() {
-        Debug.DrawRay(new Vector2( transform.position.x-direction*0.5f, transform.position.y), Vector3.down*1.2f, Color.green);
-        grounded = Physics2D.Raycast(new Vector2( transform.position.x-direction*0.5f, transform.position.y), Vector3.down, 1.2f);
+        // We need three rays to avoid bugs with corners
+        grounded = Physics2D.Raycast(transform.position, Vector3.down, 0.9f) || 
+                   Physics2D.Raycast(new Vector2(transform.position.x + 0.3f, transform.position.y), Vector3.down, 0.9f) ||
+                   Physics2D.Raycast(new Vector2(transform.position.x - 0.3f, transform.position.y), Vector3.down, 0.9f);
+
+        // We draw those rays for debugging
+        Debug.DrawRay(transform.position, Vector3.down * 0.9f, Color.green);
+        Debug.DrawRay(new Vector2(transform.position.x + 0.3f, transform.position.y), Vector3.down * 0.9f, Color.green);
+        Debug.DrawRay(new Vector2(transform.position.x - 0.3f, transform.position.y), Vector3.down * 0.9f, Color.green);
     }
 
-    private void GameEnd()
-    {
+    // Ends the game when we lose
+    private void GameEnd() {
         SceneManager.LoadScene("GameOver");
     }
 
@@ -340,16 +335,13 @@ public class PlayerController : MonoBehaviour
         isAttacking = false;
     }
 
+    // Coroutine for inmunity. We have a little inmunity time after taking a hit
     IEnumerator Inmunity() {
         yield return new WaitForSeconds(inmunityTime);
         isTakingDamage = false;
     }
 
-    IEnumerator DashCoolDown() {
-        yield return new WaitForSeconds(dashCoolDownTime);
-        canPressDash = true;
-    }
-
+    // Coroutine to make our character blink, it is used to indicate inmunity
     IEnumerator DoBlinks(int numBlinks, float seconds) {
         for (int i=0; i<numBlinks*3; i++) {
         
@@ -362,6 +354,12 @@ public class PlayerController : MonoBehaviour
         
         //make sure renderer is enabled when we exit
         ownRenderer.enabled = true;
+    }
+
+    // Coroutine for dash cool down
+    IEnumerator DashCoolDown() {
+        yield return new WaitForSeconds(dashCoolDownTime);
+        canPressDash = true;
     }
 
     /*
