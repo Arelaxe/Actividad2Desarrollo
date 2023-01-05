@@ -44,7 +44,7 @@ public abstract class NPC : MonoBehaviour
 
     protected virtual void Update()
     {
-        VisionCone();
+        CastVisionCone();
         RoutineMovement();
         CheckCollisions();
     }
@@ -53,14 +53,14 @@ public abstract class NPC : MonoBehaviour
 
     public IEnumerator TakeHit(GameObject source, float damage)
     {
-        if (IsAlive())
+        if (IsAlive() && !takingHit)
         {
             health -= damage;
 
             mainAudioSource.PlayOneShot(hitSound);
-
             animator.SetTrigger("Take Hit");
 
+            // Set taking hit state to avoid movement and take more hits while animation is playing
             yield return StartCoroutine(WaitForAnimStart("TakeHit"));
             takingHit = true;
 
@@ -75,6 +75,8 @@ public abstract class NPC : MonoBehaviour
             {
                 continueRoutine = false;
                 animator.SetTrigger("Die");
+
+                // Set layer to Player Ignore to avoid collisions
                 gameObject.layer = LayerMask.NameToLayer("Player Ignore");
 
                 yield return StartCoroutine(WaitForAnimStart("Death"));
@@ -90,13 +92,16 @@ public abstract class NPC : MonoBehaviour
 
     // Vision
 
-    protected void VisionCone()
+    /// <summary>
+    /// Create group of RayCasts which detects Player
+    /// </summary>
+    protected void CastVisionCone()
     {
         Vector2 direction = Mathf.Sign(transform.localScale.x) == -1 ? Vector2.left : Vector2.right;
         float originOffsetX = Mathf.Sign(transform.localScale.x) == -1 ? visionConeOriginOffset.x * -1 : visionConeOriginOffset.x;
         Vector3 origin = new(transform.position.x + originOffsetX, transform.position.y + visionConeOriginOffset.y, transform.position.z);
 
-        visionHits = CollisionUtils.RaycastArc(10, visionConeAngle, origin, 0, direction, visionConeDistance, LayerMask.GetMask("Player"));
+        visionHits = CollisionUtils.RaycastArc(11, visionConeAngle, origin, direction, visionConeDistance, LayerMask.GetMask("Default", "Player"));
     }
 
     // Routine
@@ -119,6 +124,7 @@ public abstract class NPC : MonoBehaviour
 
     protected bool IsWaypointReached(Vector2 waypoint)
     {
+        // If NPC can't fly, ignore y coordinate of waypoint
         float waypointY = canFly ? waypoint.y : transform.position.y;
         return Vector2.Distance(new Vector2(waypoint.x, waypointY), transform.position) < waypointRadius;
     }
@@ -150,6 +156,7 @@ public abstract class NPC : MonoBehaviour
                 CheckFlip(waypoint);
             }
 
+            // If NPC can't fly, ignore y coordinate of waypoint
             float movementY = canFly ? (waypoint.y - transform.position.y) : 0;
             movement = new(waypoint.x - transform.position.x, movementY);
             rb.velocity = movement.normalized * speed;
@@ -158,6 +165,9 @@ public abstract class NPC : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Rotate sprite according to waypoint if needed
+    /// </summary>
     protected void CheckFlip(Vector2 waypoint)
     {
         Vector3 localScale = transform.localScale;
@@ -183,6 +193,8 @@ public abstract class NPC : MonoBehaviour
     // Collisions
     protected void CheckCollisions()
     {
+        // Create group of RayCasts according to movement
+        // When colliding with scenery move to next waypoint
         movementHits = CollisionUtils.RaycastMovement(bc.bounds, movement, 10, 0.1f, LayerMask.GetMask("Default"));
         if (CollisionUtils.Count(movementHits, "Ground") > 0 && !reached)
         {
@@ -202,6 +214,8 @@ public abstract class NPC : MonoBehaviour
     {
         return health > 0;
     }
+
+    // Animation methods
 
     public IEnumerator WaitForAnimStart(string name)
     {
