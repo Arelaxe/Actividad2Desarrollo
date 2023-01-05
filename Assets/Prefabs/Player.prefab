@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 4530228567569861160}
   - component: {fileID: 4530228567569861162}
   - component: {fileID: 4530228567569861165}
-  - component: {fileID: 4530228567569861157}
   - component: {fileID: 4530228567569861154}
   m_Layer: 3
   m_Name: Player
@@ -138,9 +137,6 @@ MonoBehaviour:
   enemyLayers:
     serializedVersion: 2
     m_Bits: 64
-  healingLayer:
-    serializedVersion: 2
-    m_Bits: 0
   attackRange: 1.1
   speed: 5
   health: 3
@@ -295,22 +291,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!70 &4530228567569861157
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4530228567569861164}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.111342624, y: 0.32231146}
-  m_Direction: 0
 --- !u!61 &4530228567569861154
 BoxCollider2D:
   m_ObjectHideFlags: 0
