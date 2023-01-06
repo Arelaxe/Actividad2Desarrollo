@@ -10,13 +10,14 @@ public class Guardian : Enemy
     private float nextAttack;
 
     [Header("Chasing")]
-    [SerializeField] private float maxChasingRange;
+    [SerializeField] private float chasingRangeLeft;
+    [SerializeField] private float chasingRangeRight;
     [SerializeField] private float guardingPoint;
     private GameObject target;
 
     protected override void Update()
     {
-        VisionCone();
+        CastVisionCone();
         DetectTarget();
         RoutineMovement();
         ChaseTarget();
@@ -25,6 +26,7 @@ public class Guardian : Enemy
 
     protected override void AfterTakeHit(GameObject source)
     {
+        // Set target and chase
         target = source;
         continueRoutine = false;
     }
@@ -43,6 +45,7 @@ public class Guardian : Enemy
             RaycastHit2D player = CollisionUtils.FindFirst(visionHits, "Player");
             if (player.collider)
             {
+                // Set target only when attack position it's in range
                 float x = GetDistancedWaypoint(player.collider.gameObject);
                 if (IsWaypointInRange(x))
                 {
@@ -74,6 +77,7 @@ public class Guardian : Enemy
             }
             else
             {
+                // Ignore player if it gets out of range
                 target = null;
                 continueRoutine = true;
             }
@@ -82,16 +86,11 @@ public class Guardian : Enemy
 
     protected void Attack()
     {
-        Vector3 localScale = transform.localScale;
-        if (transform.position.x < target.transform.position.x && Mathf.Sign(localScale.x) == -1
-            || transform.position.x > target.transform.position.x && Mathf.Sign(localScale.x) == 1)
-        {
-            localScale.x *= -1;
-            transform.localScale = localScale;
-        }
+        CheckFlip(target.transform.position);
 
         animator.SetBool("Walking", false);
 
+        // Only attack if it's available next attack
         if (Time.time > nextAttack)
         {
             nextAttack = Time.time + attackRate;
@@ -107,12 +106,14 @@ public class Guardian : Enemy
     {
         if (attacking)
         {
+            // Disable attack state when animation ends
             yield return StartCoroutine(WaitForAnimCycle("Attack"));
             attacking = false;
         }
         else
         {
             MoveToWaypoint(targetPosition);
+            // Idle animation when colliding with scenery while chasing
             if (CollisionUtils.Count(movementHits, "Ground") > 0)
             {
                 animator.SetBool("Walking", false);
@@ -122,6 +123,9 @@ public class Guardian : Enemy
 
     // Auxiliar methods
 
+    /// <summary>
+    /// Get waypoint to target keeping distance for attack
+    /// </summary>
     private float GetDistancedWaypoint(GameObject availableTarget)
     {
         float x = availableTarget.transform.position.x;
@@ -137,9 +141,12 @@ public class Guardian : Enemy
         return x;
     }
 
+    /// <summary>
+    /// Check if the waypoint isn't out of the chasing distance according to the guarding point
+    /// </summary>
     private bool IsWaypointInRange(float waypointX)
     {
-        return waypointX >= guardingPoint - maxChasingRange && waypointX <= guardingPoint + maxChasingRange;
+        return waypointX >= guardingPoint - chasingRangeLeft && waypointX <= guardingPoint + chasingRangeRight;
     }
 
 }

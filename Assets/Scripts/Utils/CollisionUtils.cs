@@ -3,51 +3,44 @@ using UnityEngine;
 
 public class CollisionUtils : MonoBehaviour
 {
-    public static RaycastHit2D Raycast(Vector3 origin, Vector2 direction, float distance, LayerMask layerMask, Vector3 end)
-    {
-        RaycastHit2D hit2D = Physics2D.Raycast(origin, direction, distance, layerMask);
-        Debug.DrawLine(origin, end, Color.red);
-        return hit2D;
-    }
-
+    /// <summary>
+    /// Creates Physics2D Raycast and draw debug line
+    /// </summary>
     public static RaycastHit2D Raycast(Vector3 origin, Vector2 direction, float distance, LayerMask layerMask)
     {
         Vector3 end = new(origin.x + direction.x * distance, origin.y + direction.y * distance, origin.z);
-        return Raycast(origin, direction, distance, layerMask, end);
+        Debug.DrawLine(origin, end, Color.red);
+        return Physics2D.Raycast(origin, direction, distance, layerMask);
     }
 
-    public static RaycastHit2D[] RaycastArc(int hits, float angle, Vector3 origin, float originOffset, Vector2 direction, float distance, LayerMask layerMask)
+    /// <summary>
+    /// Creates arc of Physics2D Raycasts.
+    /// </summary>
+    /// <param name="hits">Number of Raycasts</param>
+    /// <param name="angle">Angle of the arc</param>
+    public static RaycastHit2D[] RaycastArc(int hits, float angle, Vector3 origin, Vector2 direction, float distance, LayerMask layerMask)
     {
-        if (hits % 2 == 0)
-        {
-            hits += 1;
-        }
-
         RaycastHit2D[] hit2Ds = new RaycastHit2D[hits];
 
-        Vector3 rayOrigin = new(origin.x + direction.x * originOffset, origin.y + direction.y * originOffset, origin.z);
-        float rayAngle = angle / 2 / ((hits - 1) / 2);
+        Vector3 rayOrigin = new(origin.x + direction.x, origin.y + direction.y, origin.z);
+        float initialRayAngle = angle / 2;
+        float rayAngle = angle / (hits - 1);
 
-        hit2Ds[0] = Raycast(rayOrigin, direction, distance, layerMask);
-
-        int anglePos = 1;
-        for (int i = 1; i < hits; i += 2)
+        for (int i = 0; i < hits; i ++)
         {
-            Vector3 rayDirectionR = VectorUtils.RotateVector(direction, -rayAngle * anglePos).normalized;
-            Vector3 rayOriginR = originOffset != 0 ? origin + rayDirectionR * originOffset : rayOrigin;
-            hit2Ds[i] = Raycast(rayOriginR, rayDirectionR, distance, layerMask);
+            Vector3 rayDirection = VectorUtils.RotateVector(direction, initialRayAngle).normalized;
+            hit2Ds[i] = Raycast(rayOrigin, rayDirection, distance, layerMask);
 
-            Vector3 rayDirectionL = VectorUtils.RotateVector(direction, rayAngle * anglePos).normalized;
-            Vector3 rayOriginL = originOffset != 0 ? origin + rayDirectionL * originOffset : rayOrigin;
-            hit2Ds[i + 1] = Raycast(rayOriginL, rayDirectionL, distance, layerMask);
-
-            anglePos++;
+            initialRayAngle -= rayAngle;
         }
 
         return hit2Ds;
     }
 
-    public static RaycastHit2D[] RaycastHorizontal(Bounds bounds, Vector2 movement, int hits, float distance, LayerMask layerMask)
+    /// <summary>
+    /// Creates group of Physics2D Raycasts covering a Bounds horizontal side
+    /// </summary>
+    public static RaycastHit2D[] RaycastHorizontal(Bounds bounds, Vector2 direction, int hits, float distance, LayerMask layerMask)
     {
         RaycastHit2D[] hits2D = new RaycastHit2D[hits];
 
@@ -55,12 +48,12 @@ public class CollisionUtils : MonoBehaviour
 
         for (int i = 0; i < hits; i++)
         {
-            if (movement.x > 0)
+            if (direction.x > 0)
             {
                 Vector3 origin = new(bounds.max.x, bounds.max.y - aug * i, bounds.max.z);
                 hits2D[i] = Raycast(origin, Vector2.right, distance, layerMask);
             }
-            else if (movement.x < 0)
+            else if (direction.x < 0)
             {
                 Vector3 origin = new(bounds.min.x, bounds.max.y - aug * i, bounds.max.z);
                 hits2D[i] = Raycast(origin, Vector2.left, distance, layerMask);
@@ -70,7 +63,10 @@ public class CollisionUtils : MonoBehaviour
         return hits2D;
     }
 
-    public static RaycastHit2D[] RaycastVertical(Bounds bounds, Vector2 movement, int hits, float distance, LayerMask layerMask)
+    /// <summary>
+    /// Creates group of Physics2D Raycasts covering a Bounds vertical side
+    /// </summary>
+    public static RaycastHit2D[] RaycastVertical(Bounds bounds, Vector2 direction, int hits, float distance, LayerMask layerMask)
     {
         RaycastHit2D[] hits2D = new RaycastHit2D[hits];
 
@@ -79,12 +75,12 @@ public class CollisionUtils : MonoBehaviour
 
         for (int i = 0; i < hits; i++)
         {
-            if (movement.y > 0)
+            if (direction.y > 0)
             {
                 Vector3 origin = new(bounds.max.x - aug * i, bounds.max.y, bounds.max.z);
                 hits2D[i] = Raycast(origin, Vector2.up, distance, layerMask);
             }
-            else if (movement.y < 0)
+            else if (direction.y < 0)
             {
                 Vector3 origin = new(bounds.max.x - aug * i, bounds.min.y, bounds.max.z);
                 hits2D[i] = Raycast(origin, Vector2.down, distance, layerMask);
@@ -94,6 +90,9 @@ public class CollisionUtils : MonoBehaviour
         return hits2D;
     }
 
+    /// <summary>
+    /// Creates group of Physics2D Raycasts covering a Bounds vertical and horizontal sides
+    /// </summary>
     public static RaycastHit2D[] RaycastMovement(Bounds bounds, Vector2 movement, int hits, float distance, LayerMask layerMask)
     {
         RaycastHit2D[] hits2D = new RaycastHit2D[hits * 2];
@@ -105,6 +104,9 @@ public class CollisionUtils : MonoBehaviour
         return hits2D;
     }
 
+    /// <summary>
+    /// Finds first RaycastHit2D which has hit a game object with specific name
+    /// </summary>
     public static RaycastHit2D FindFirst(RaycastHit2D[] hits, string name)
     {
         RaycastHit2D firstHit = new();
@@ -122,6 +124,9 @@ public class CollisionUtils : MonoBehaviour
         return firstHit;
     }
 
+    /// <summary>
+    /// Counts RaycastHit2Ds which has hit a game object with specific tag
+    /// </summary>
     public static int Count(RaycastHit2D[] hits, string tag)
     {
         int collisions = 0;

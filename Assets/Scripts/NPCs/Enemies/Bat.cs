@@ -14,6 +14,7 @@ public class Bat : Enemy
         base.Update();
 
         DetectTarget();
+        // Follow target position if it doesn't flip while moving
         if (target != null && IsAlive() && !flip)
         {
             CheckFlip(target.transform.position);
@@ -22,11 +23,13 @@ public class Bat : Enemy
 
     protected override void AfterTakeHit(GameObject source)
     {
+        // Increase movement speed
         speed *= speedMultiplier;
     }
 
     protected override void AfterDeath() 
     {
+        // Move to ground
         rb.velocity = Vector2.down * 5;
     }
 

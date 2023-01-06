@@ -19,6 +19,7 @@ public abstract class Enemy : NPC
         return damage;
     }
 
+    // Set according to animation frames
     public bool IsDamageFramePlaying()
     {
         return damageFramePlaying;

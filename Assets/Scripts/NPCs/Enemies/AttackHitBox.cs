@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class AttackHitBox : MonoBehaviour
 {
-    private Guardian enemy;
+    private Enemy enemy;
 
     void Start()
     {
-        enemy = GetComponentInParent<Guardian>();
+        enemy = GetComponentInParent<Enemy>();
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -18,7 +18,6 @@ public class AttackHitBox : MonoBehaviour
             if (collision.name == "Player")
             {
                 collision.gameObject.GetComponent<PlayerController>().Hit();
-                //Debug.Log("Player take hit function");
             }
         }
     }
