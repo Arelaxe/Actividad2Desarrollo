@@ -5,18 +5,36 @@ using UnityEngine.SceneManagement;
 
 public class MenuBehaviour : MonoBehaviour
 {
+    // Switch menus between Initial Menu and Controls Menu
     [SerializeField] private GameObject menu;
     [SerializeField] private GameObject controls;
+    
+    // Pause menu 
+    [SerializeField] private GameObject ExitPanel;
+
+    // Audio 
     [SerializeField] private AudioSource source;
     [SerializeField] private AudioClip clip;
+    [SerializeField] private AudioClip pop;
+
+    public void Audio(){
+        source.PlayOneShot(clip);
+    }
+
+    public void AudioHover(){
+        source.PlayOneShot(pop);
+    }
 
     public void Play(){
-        //audio
         SceneManager.LoadScene("Level1");
     }
 
+    public void Resume(){
+        Time.timeScale = 1.0f;
+        ExitPanel.SetActive(false);
+    }
+
     public void Controls(){
-        // audio
         menu.SetActive(false);
         controls.SetActive(true);
     }
@@ -26,13 +44,11 @@ public class MenuBehaviour : MonoBehaviour
     }
 
     public void Return(){
-        // audio
         controls.SetActive(false);
         menu.SetActive(true);
     }
 
     public void Exit(){
-        //audio
         Application.Quit();
     }
 }
