@@ -21,6 +21,10 @@ public class MenuBehaviour : MonoBehaviour
         controls.SetActive(true);
     }
 
+    public void Menu(){
+        SceneManager.LoadScene("MenuInicial");
+    }
+
     public void Return(){
         // audio
         controls.SetActive(false);

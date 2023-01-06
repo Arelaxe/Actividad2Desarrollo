@@ -155,6 +155,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 890079a23b973424c9b70d8b801b1c5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menu: {fileID: 0}
+  controls: {fileID: 0}
+  source: {fileID: 0}
+  clip: {fileID: 0}
 --- !u!114 &139999355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,8 +236,8 @@ RectTransform:
   - {fileID: 421728025}
   - {fileID: 2139619787}
   - {fileID: 753328110}
-  - {fileID: 938091776}
   - {fileID: 1113750676}
+  - {fileID: 938091776}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -339,9 +343,9 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 3e93eda8224d8b742b5fc02a999047c6, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.7
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -436,7 +440,7 @@ GameObject:
   - component: {fileID: 421728027}
   - component: {fileID: 421728026}
   m_Layer: 5
-  m_Name: Personaje-sprite
+  m_Name: Warrior Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -611,7 +615,7 @@ GameObject:
   - component: {fileID: 753328112}
   - component: {fileID: 753328111}
   m_Layer: 5
-  m_Name: Button - Reiniciar
+  m_Name: Button - Retry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -651,10 +655,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnUp: {fileID: 938091777}
+    m_SelectOnDown: {fileID: 1113750677}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -684,7 +688,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 139999354}
         m_TargetAssemblyTypeName: MenuBehaviour, Assembly-CSharp
-        m_MethodName: Jugar
+        m_MethodName: Play
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -880,7 +884,7 @@ GameObject:
   - component: {fileID: 938091778}
   - component: {fileID: 938091777}
   m_Layer: 5
-  m_Name: Button - Salir
+  m_Name: Button - Exit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -900,7 +904,7 @@ RectTransform:
   m_Children:
   - {fileID: 802135630}
   m_Father: {fileID: 139999358}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.47787502, y: 0.282}
   m_AnchorMax: {x: 0.54356253, y: 0.33585173}
@@ -920,10 +924,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnUp: {fileID: 1113750677}
+    m_SelectOnDown: {fileID: 753328111}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -953,7 +957,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 139999354}
         m_TargetAssemblyTypeName: MenuBehaviour, Assembly-CSharp
-        m_MethodName: Salir
+        m_MethodName: Exit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1036,7 +1040,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000045776367, y: 0}
+  m_AnchoredPosition: {x: -0.000061035156, y: 0}
   m_SizeDelta: {x: 0.000030518, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1019175332
@@ -1169,7 +1173,7 @@ RectTransform:
   m_Children:
   - {fileID: 1019175331}
   m_Father: {fileID: 139999358}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.41900003, y: 0.393}
   m_AnchorMax: {x: 0.61700004, y: 0.446}
@@ -1189,10 +1193,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnUp: {fileID: 753328111}
+    m_SelectOnDown: {fileID: 938091777}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -1222,7 +1226,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 139999354}
         m_TargetAssemblyTypeName: MenuBehaviour, Assembly-CSharp
-        m_MethodName: Volver
+        m_MethodName: Menu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1282,7 +1286,7 @@ GameObject:
   - component: {fileID: 1502693065}
   - component: {fileID: 1502693064}
   m_Layer: 5
-  m_Name: Menu Inicial
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1493,7 +1497,7 @@ GameObject:
   - component: {fileID: 2139619789}
   - component: {fileID: 2139619788}
   m_Layer: 5
-  m_Name: Titulo
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1516,7 +1520,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.296, y: 0.707}
   m_AnchorMax: {x: 0.72700006, y: 0.882}
-  m_AnchoredPosition: {x: -0.5, y: 1.1011658}
+  m_AnchoredPosition: {x: -0.5, y: 1.1011353}
   m_SizeDelta: {x: -5, y: -3.1242065}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2139619788

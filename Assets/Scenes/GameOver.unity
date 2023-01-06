@@ -271,7 +271,7 @@ GameObject:
   - component: {fileID: 332657011}
   - component: {fileID: 332657010}
   m_Layer: 5
-  m_Name: Button - Salir
+  m_Name: Button - Exit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -295,7 +295,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.472875, y: 0.22866738}
   m_AnchorMax: {x: 0.5384792, y: 0.3001483}
-  m_AnchoredPosition: {x: 1.5, y: 0.8072815}
+  m_AnchoredPosition: {x: 1.5, y: 0.807312}
   m_SizeDelta: {x: -1.5108032, y: 1.3570995}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &332657010
@@ -311,10 +311,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnUp: {fileID: 1452452285}
+    m_SelectOnDown: {fileID: 470210932}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -344,7 +344,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413069925}
         m_TargetAssemblyTypeName: MenuBehaviour, Assembly-CSharp
-        m_MethodName: Salir
+        m_MethodName: Exit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -404,7 +404,7 @@ GameObject:
   - component: {fileID: 417069609}
   - component: {fileID: 417069608}
   m_Layer: 5
-  m_Name: Menu Inicial
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -481,7 +481,7 @@ GameObject:
   - component: {fileID: 470210933}
   - component: {fileID: 470210932}
   m_Layer: 5
-  m_Name: Button - Reintentar
+  m_Name: Button - Retry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -521,10 +521,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnUp: {fileID: 332657010}
+    m_SelectOnDown: {fileID: 1452452285}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -554,7 +554,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413069925}
         m_TargetAssemblyTypeName: MenuBehaviour, Assembly-CSharp
-        m_MethodName: Jugar
+        m_MethodName: Play
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -615,7 +615,7 @@ GameObject:
   - component: {fileID: 530383513}
   - component: {fileID: 530383512}
   m_Layer: 5
-  m_Name: Personaje-sprite
+  m_Name: Warrior Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -794,11 +794,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: dd535a861ef0fed4da07538065d778ff, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 2574346bb9e55794094507ea40d7eccb, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.22
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1182,6 +1182,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 890079a23b973424c9b70d8b801b1c5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menu: {fileID: 0}
+  controls: {fileID: 0}
+  source: {fileID: 0}
+  clip: {fileID: 0}
 --- !u!114 &1413069926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1322,10 +1326,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 4
     m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnUp: {fileID: 470210932}
+    m_SelectOnDown: {fileID: 332657010}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -1355,7 +1359,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413069925}
         m_TargetAssemblyTypeName: MenuBehaviour, Assembly-CSharp
-        m_MethodName: Volver
+        m_MethodName: Menu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1415,7 +1419,7 @@ GameObject:
   - component: {fileID: 1525599140}
   - component: {fileID: 1525599139}
   m_Layer: 5
-  m_Name: Titulo
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
