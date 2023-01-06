@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MenuPausaSalida : MonoBehaviour
+public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private GameObject ExitPanel;
 
