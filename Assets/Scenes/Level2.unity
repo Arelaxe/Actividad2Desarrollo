@@ -397,6 +397,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1503170836681084795, guid: ee347ecfbbc9a714f9819b929e32cb7d, type: 3}
+      propertyPath: flip
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1503170836681084795, guid: ee347ecfbbc9a714f9819b929e32cb7d, type: 3}
       propertyPath: waypoints.Array.data[0].x
       value: 35
       objectReference: {fileID: 0}
