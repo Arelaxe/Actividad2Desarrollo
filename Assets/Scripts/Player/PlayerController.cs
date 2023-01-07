@@ -309,13 +309,13 @@ public class PlayerController : MonoBehaviour
     private void CheckIsGrounded() {
         // We need three rays to avoid bugs with corners
         grounded = Physics2D.Raycast(transform.position, Vector3.down, 0.9f) || 
-                   Physics2D.Raycast(new Vector2(transform.position.x + 0.3f, transform.position.y), Vector3.down, 0.9f) ||
-                   Physics2D.Raycast(new Vector2(transform.position.x - 0.3f, transform.position.y), Vector3.down, 0.9f);
+                   Physics2D.Raycast(new Vector2(transform.position.x + 0.25f, transform.position.y), Vector3.down, 0.9f) ||
+                   Physics2D.Raycast(new Vector2(transform.position.x - 0.25f, transform.position.y), Vector3.down, 0.9f);
 
         // We draw those rays for debugging
         Debug.DrawRay(transform.position, Vector3.down * 0.9f, Color.green);
-        Debug.DrawRay(new Vector2(transform.position.x + 0.3f, transform.position.y), Vector3.down * 0.9f, Color.green);
-        Debug.DrawRay(new Vector2(transform.position.x - 0.3f, transform.position.y), Vector3.down * 0.9f, Color.green);
+        Debug.DrawRay(new Vector2(transform.position.x + 0.25f, transform.position.y), Vector3.down * 0.9f, Color.green);
+        Debug.DrawRay(new Vector2(transform.position.x - 0.25f, transform.position.y), Vector3.down * 0.9f, Color.green);
     }
 
     // Ends the game when we lose
