@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
     private bool isDead = false;
     private bool canPressDash = true;
     private bool paused = false;
+    private bool isDashing = false;
     
     // Audio Sources
     private AudioSource mainAudioSource;
@@ -99,7 +100,7 @@ public class PlayerController : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        if (!isDead){
+        if (!isDead && !paused){
             Walk();
 
             if (grounded && jumpAction.triggered){
@@ -114,21 +115,21 @@ public class PlayerController : MonoBehaviour
                 canPressDash = false;
                 Dash();
             }
+        }
 
-            if(pauseAction.triggered){
-                Pause();
-            }
+        if(pauseAction.triggered && !isDead){
+            Pause();
         }
     }
 
     // Frame-rate independent function for physics calculations
     private void FixedUpdate() {
-        if (!isDead){
+        if (!isDead && !paused){
             WalkPhysics();
             DashPhysics();
             CheckIsGrounded();
         }
-        else{
+        else if (isDead){
             if (grounded){ // We destroy de RigidBody 2D when de body reaches the ground
                 Destroy(rb);
             }
@@ -150,6 +151,15 @@ public class PlayerController : MonoBehaviour
             isCollided = false;
             lastCollisionEnded = true;
         }
+    }
+
+    /*
+        Getters and Setters
+    */
+
+    // Changes paused bool
+    public void SetPaused(bool newPaused){
+        paused = newPaused;
     }
 
     /*
@@ -190,12 +200,14 @@ public class PlayerController : MonoBehaviour
 
     // Jump action
     private void Jump(){
-        // Update animations and sounds
-        animator.SetTrigger("jump");
-        mainAudioSource.PlayOneShot(jumpSound);
+        if (!isDashing){
+            // Update animations and sounds
+            animator.SetTrigger("jump");
+            mainAudioSource.PlayOneShot(jumpSound);
 
-        // Add a force to jump
-        rb.AddForce(Vector2.up * jumpForce);
+            // Add a force to jump
+            rb.AddForce(Vector2.up * jumpForce);
+        }
     }
 
     // Attack action
@@ -287,6 +299,7 @@ public class PlayerController : MonoBehaviour
     // Physics for the dash action
     private void DashPhysics() {
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Dash")){
+            isDashing = true;
             rb.velocity = new Vector2(direction * dashSpeed, rb.velocity.y); 
             StartCoroutine(DashCoolDown());
         }
@@ -360,6 +373,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator DashCoolDown() {
         yield return new WaitForSeconds(dashCoolDownTime);
         canPressDash = true;
+        isDashing = false;
     }
 
     /*

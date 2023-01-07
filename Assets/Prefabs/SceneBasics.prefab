@@ -1814,6 +1814,7 @@ MonoBehaviour:
   menu: {fileID: 0}
   controls: {fileID: 0}
   ExitPanel: {fileID: 5344821243492116630}
+  player: {fileID: 8426802780107681999}
   source: {fileID: 5344821243410914900}
   clip: {fileID: 8300000, guid: ec33d78df67598741ae7392fc2024bb4, type: 3}
   pop: {fileID: 8300000, guid: 9e8ac1b3c5dc2da4cacc51dff1fde64c, type: 3}

@@ -12,6 +12,9 @@ public class MenuBehaviour : MonoBehaviour
     // Pause menu 
     [SerializeField] private GameObject ExitPanel;
 
+    // Player
+    [SerializeField] private GameObject player;
+
     // Audio 
     [SerializeField] private AudioSource source;
     [SerializeField] private AudioClip clip;
@@ -32,6 +35,7 @@ public class MenuBehaviour : MonoBehaviour
     public void Resume(){
         Time.timeScale = 1.0f;
         ExitPanel.SetActive(false);
+        player.GetComponent<PlayerController>().SetPaused(false);
     }
 
     public void Controls(){
