@@ -7,6 +7,9 @@ public class EndGameScript : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
-        SceneManager.LoadScene("EndCredits");
+        if (other.name == "Player")
+        {
+            SceneManager.LoadScene("EndCredits");
+        }
     }
 }
